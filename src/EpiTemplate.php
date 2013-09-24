@@ -1,5 +1,5 @@
 <?php
-class EpiTemplate
+class EpiTemplate implements EpiTemplateInterface
 {
   /**
    * EpiRoute::display('/path/to/template.php', $array);
@@ -100,6 +100,13 @@ class EpiTemplate
   }
 }
 
+interface EpiTemplateInterface
+{
+  public function get($key = null);
+  public function display($template = null, $vars = null);
+  public function json($data);
+  public function jsonResponse($data);
+}
 
 function getTemplate()
 {
@@ -107,7 +114,10 @@ function getTemplate()
   if($template)
     return $template;
 
-  $template = new EpiTemplate();
+  if (class_exists('EpiTemplate_MtHaml') && class_exists('MtHaml\Environment')) {
+    $template = new EpiTemplate_MtHaml();
+  } else {
+    $template = new EpiTemplate();
+  }
   return $template;
 }
-

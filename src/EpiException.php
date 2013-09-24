@@ -29,3 +29,4 @@ class EpiDatabaseException extends EpiException{}
 class EpiDatabaseConnectionException extends EpiDatabaseException{}
 class EpiDatabaseQueryException extends EpiDatabaseException{}
 class EpiSessionException extends EpiException{}
+class EpiTemplateException extends EpiException{}
