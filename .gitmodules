@@ -1,0 +1,3 @@
+[submodule "examples/site-with-haml-templates/mthaml"]
+	path = examples/site-with-haml-templates/mthaml
+	url = https://github.com/arnaud-lb/MtHaml
