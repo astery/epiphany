@@ -11,7 +11,7 @@ class EpiTemplate_Extendable extends EpiTemplate implements EpiTemplateInterface
 
     $_content = $this->get($template, $vars);
 
-    if (file_exists(Epi::getPath('view').'/'.$_template) || file_exists($_template)) {
+    if (is_file(Epi::getPath('view').'/'.$_template) || is_file($_template)) {
       $vars['_content'] = $_content;
       return parent::display($_template, $vars);
     } else {
