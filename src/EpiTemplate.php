@@ -1,6 +1,10 @@
 <?php
 class EpiTemplate implements EpiTemplateInterface
 {
+  const PHP_EXT = 'EpiTemplate_Extendable';
+  const HAML    = 'EpiTemplate_MtHaml';
+  private static $instances, $employ;
+
   /**
    * EpiRoute::display('/path/to/template.php', $array);
    * @name  display
@@ -98,6 +102,39 @@ class EpiTemplate implements EpiTemplateInterface
     header('Content-type: application/x-json');
     echo $json;
   }
+
+  /*
+   * @param  type  required
+   * @params optional
+   */
+  public static function getInstance()
+  {
+    $params = func_get_args();
+    $hash   = md5(json_encode($params));
+    if(isset(self::$instances[$hash]))
+      return self::$instances[$hash];
+
+    $type = $params[0];
+    if(!isset($params[1]))
+      $params[1] = array();
+    self::$instances[$hash] = new $type($params[1]);
+    self::$instances[$hash]->hash = $hash;
+    return self::$instances[$hash];
+  }
+
+  /*
+   * @param  $const
+   * @params optional
+   */
+  public static function employ(/*$const*/)
+  {
+    if(func_num_args() === 1)
+      self::$employ = func_get_arg(0);
+    elseif(func_num_args() > 1)
+      self::$employ = func_get_args();
+
+    return self::$employ;
+  }
 }
 
 interface EpiTemplateInterface
@@ -110,14 +147,13 @@ interface EpiTemplateInterface
 
 function getTemplate()
 {
-  static $template;
-  if($template)
-    return $template;
-
-  if (class_exists('EpiTemplate_MtHaml') && class_exists('MtHaml\Environment')) {
-    $template = new EpiTemplate_MtHaml();
+  $employ = EpiTemplate::employ();
+  $class = array_shift($employ);
+  if(class_exists($class)) {
+    return EpiTemplate::getInstance($class, $employ);
+  } else if(class_exists(EpiTemplate::PHP_EXT)) {
+    return EpiTemplate::getInstance(EpiTemplate::PHP_EXT);
   } else {
-    $template = new EpiTemplate();
+    return new EpiTemplate();
   }
-  return $template;
 }
