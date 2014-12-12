@@ -3,7 +3,11 @@ class EpiTemplate_Extendable extends EpiTemplate implements EpiTemplateInterface
 {
   public function display($template = null, $vars = null)
   {
-    $_template = Epi::getSetting('default_layout');
+    $def_vars = Epi::getSetting('template_default_vars');
+
+    if (is_array($def_vars)) {
+      $vars = array_merge($def_vars, $vars);
+    }
 
     if (array_key_exists('_template', $vars)) {
       $_template = $vars['_template'];
